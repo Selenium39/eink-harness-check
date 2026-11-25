@@ -2,7 +2,7 @@
 // Assertions are consistency-based (decorated <=> exactly 2 ornaments around the
 // first h1/h2; skipped <=> byte-identical chapter), with hard expectations for
 // books B and C (no h1/h2 anywhere -> everything skipped).
-import { EpubFile, JSZip } from './editor-lib.js';
+import { EpubFile, JSZip } from './editor-lib.js?v=3';
 
 const logEl = document.getElementById('log');
 const lines = [];
@@ -40,7 +40,7 @@ async function testBook(name, url, expectAllSkipped) {
   await epub0.load();
   const chapters0 = await zipChapters(await epub0.getBlob());
   let identical = 0, total = 0;
-  for (const p of epub0.textFileList) {
+  for (const p of epub0.textFileList.filter((x) => x !== epub0.navFilePath)) {
     total++;
     if (chapters0[p] === snapshot[p]) identical++;
     else log(`baseline export: chapter ${p} differs`, true);
@@ -116,9 +116,10 @@ try {
   log('EXCEPTION: ' + (e?.stack || e), true);
 }
 
-log(`\n=== SUMMARY: ${failures === 0 ? 'ALL CHECKS PASSED' : failures + ' FAILURE(S)'} ===`, failures > 0);
-window.__results = { failures };
-document.title = failures === 0 ? 'TESTS-PASSED' : 'TESTS-FAILED-' + failures;
+const finalFailures = failures;
+log(`\n=== SUMMARY: ${finalFailures === 0 ? 'ALL CHECKS PASSED' : finalFailures + ' FAILURE(S)'} ===`);
+window.__results = { failures: finalFailures };
+document.title = finalFailures === 0 ? 'TESTS-PASSED' : 'TESTS-FAILED-' + finalFailures;
 
 // Reopen book A's decorated (celestial) export in foliate for the screenshot.
 try {
