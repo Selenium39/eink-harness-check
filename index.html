@@ -1,1 +1,46 @@
-gone
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Editor Decoration Harness</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: { extend: { colors: {
+      background: '#171717', surface: '#262626', border: '#2F2F2F',
+      text: '#FFFFFF', 'text-secondary': '#A3A3A3',
+      primary: '#ff5900', secondary: '#ff9500', accent: '#ffa34d',
+    } } },
+  };
+</script>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 16px; background: #fafafa; color: #111; }
+  #log { white-space: pre-wrap; font: 12px/1.5 ui-monospace, monospace; background: #111; color: #d6ffd6; padding: 12px; border-radius: 8px; max-height: 520px; overflow: auto; }
+  #log .FAIL { color: #ff8080; }
+  foliate-view { display: block; width: 100%; height: 640px; border: 1px solid #ccc; background: #fff; }
+  #modal-root { position: relative; z-index: 1; }
+</style>
+</head>
+<body>
+<h1>e-ink editor chapter-decoration — acceptance harness</h1>
+<p>Real repo code throughout: EpubFile + chapterDecoration (editor-lib.js), ChapterDecorationModal (modal-lib.js), vendored foliate for reopening.</p>
+<button id="hide-modal" type="button">Hide modal (harness only)</button>
+<div id="modal-root"></div>
+
+<h2>Engine tests</h2>
+<pre id="log">running…</pre>
+
+<h2>Decorated export reopened in foliate (book A, celestial)</h2>
+<div id="reader-host"></div>
+
+<script type="module" src="./modal-lib.js"></script>
+<script type="module">
+  document.getElementById('hide-modal').addEventListener('click', () => {
+    document.getElementById('modal-root').style.display = 'none';
+  });
+</script>
+<script type="module" src="./foliate-js/view.js"></script>
+<script type="module" src="./engine.js"></script>
+</body>
+</html>
