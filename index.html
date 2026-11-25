@@ -26,6 +26,18 @@
 <h1>e-ink editor chapter-decoration — acceptance harness</h1>
 <p>Real repo code throughout: EpubFile + chapterDecoration (editor-lib.js), ChapterDecorationModal (modal-lib.js), vendored foliate for reopening.</p>
 <button id="hide-modal" type="button">Hide modal (harness only)</button>
+<div id="js-errors" style="color:#b91c1c;font:12px ui-monospace,monospace;white-space:pre-wrap"></div>
+<script>
+  window.__errs = [];
+  addEventListener('error', (e) => { window.__errs.push(String(e.message || e.error)); document.getElementById('js-errors').textContent = 'JS ERRORS:\n' + window.__errs.join('\n'); });
+  addEventListener('unhandledrejection', (e) => { window.__errs.push('unhandledrejection: ' + String(e.reason && e.reason.stack || e.reason)); document.getElementById('js-errors').textContent = 'JS ERRORS:\n' + window.__errs.join('\n'); });
+  setTimeout(() => {
+    const root = document.getElementById('modal-root');
+    if (root && !root.hasChildNodes()) {
+      document.getElementById('js-errors').textContent += '\nMODAL DID NOT MOUNT (modal-root empty after 4s)';
+    }
+  }, 4000);
+</script>
 <div id="modal-root"></div>
 
 <h2>Engine tests</h2>

@@ -32,14 +32,18 @@ async function testBook(name, url, expectAllSkipped) {
     if (/\.x?html?$/i.test(path)) snapshot[path] = await entry.async('string');
   }
 
-  // 1) zero side effects: load + export without touching decoration
+  // 1) zero side effects: load + export without touching decoration.
+  // Scope = textFileList chapters only: getBlob() always re-serializes
+  // opf/ncx/nav through XMLSerializer (pre-existing behavior), so nav.xhtml
+  // bytes legitimately change on ANY export, decorated or not.
   const epub0 = new EpubFile(new File([bytes], name));
   await epub0.load();
   const chapters0 = await zipChapters(await epub0.getBlob());
   let identical = 0, total = 0;
-  for (const p of Object.keys(snapshot)) {
+  for (const p of epub0.textFileList) {
     total++;
     if (chapters0[p] === snapshot[p]) identical++;
+    else log(`baseline export: chapter ${p} differs`, true);
   }
   log(`baseline export: ${identical}/${total} chapter files byte-identical`, identical !== total);
 
